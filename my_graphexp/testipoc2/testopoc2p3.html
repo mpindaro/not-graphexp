@@ -1,0 +1,99 @@
+<html>
+<head>
+<meta http-equiv="Cache-Control" content="no-cache">
+</head>
+<script type="text/javascript">
+function xxx() {
+document.getElementById("temptime").setAttribute('value',Date.now());
+var getUrl = window.location;
+myhost = getUrl.host;
+duepunti = myhost.indexOf(":");
+if (duepunti>-1) myhost = myhost.substring(0,duepunti);
+var baseUrl1 = getUrl.protocol + "//"+ myhost+":8001/html/testipoc2/visura.html";
+var baseUrl2 = getUrl.protocol + "//"+ myhost+":8001/html/testipoc2/docvisura.html";
+document.getElementById("btn1").setAttribute('formaction',baseUrl1);
+document.getElementById("btn2").setAttribute('formaction',baseUrl2);
+}
+</script>
+
+<body onload="xxx()">
+<style type="text/css" media="screen">
+/*
+.nodes-image {
+	margin:-100;
+}
+*/
+body
+{
+	margin: 0;
+	padding: 0;
+	color: #333;
+	background-color: #fff;
+	font: 12px "Helvetica Neue", Helvetica, Arial, Geneva, sans-serif;
+}
+
+th, td
+{
+	padding: .5em 1em;
+	vertical-align: top;
+	text-align: left;
+}
+	
+    .imageblock .content img {
+        max-width: 900px;
+        max-height: 300px;
+    }
+	.deck h3 {
+		display: block !important;
+		margin-bottom:8px;
+		margin-top:5px;
+	}
+	.listingblock {
+		margin:8px;
+	}
+	.pull-bottom {
+		position:relative;
+		bottom:1em;
+	}
+</style>
+<style type="text/css" media="screen">
+#editor.maximize-editor .CodeMirror-code {
+ font-size:40px;
+ line-height:45px;
+}
+</style>
+
+<table>
+<tr>
+<td width="45%">
+    <h3>Caricamento dei dati societari</h3>
+    <br/>
+    <div>
+      <div class="paragraph">
+<p>Ora acquisiamo i dati delle visure camerali delle socie&agrave; indagate usando il <a href="http://accessoallebanchedati.registroimprese.it/abdo/#strutturaDati"  target="blank">formato di scambio dati</a> delle Camere di Commercio.<br/>
+</p>
+<div>Notiamo che uno dei soci della societ&agrave; alfa srl &egrave; una societ&agrave; per azioni, quindi importiamo anche la sua visura e l'elenco di eventuali altre societ&agrave; di cui possiede delle quote:</div>
+<div>A questo punto acquisiamo le visure camerali anche delle altre due parrecipate e visualizziamo la struttura completa fino a questo punto:</div>
+</td>
+<td>
+<table>
+<tr>
+<td>
+<form>
+Partita IVA di cui acquisire la visura e le eventuali partecipazioni:<br/>
+<input name="piva" type="text"  value="11111111111 22222222222 33333333333"><br/>
+<input type="hidden" value="1598879179" name="temptime" id="temptime"/>
+<button formaction="http://localhost:8001/html/testipoc2/visura.html" formtarget="iframe1" id="btn1">Acquisisci</button>
+<button formaction="http://localhost:8001/html/testipoc2/docvisura.html" formtarget="iframe1" id="btn2">Situazione documenti</button>
+</form>
+</td><td>
+<iframe name="iframe1" src="about:blank"  height="160px" width="600px"></iframe>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+</body>
+</html>

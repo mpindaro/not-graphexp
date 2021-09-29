@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.css"  media="screen,projection"/>
+
+</head>
+<body>
+    <div class="section black white-text">
+        <div class="row valign-wrapper">
+            <div class="input-field col s2 white-text">
+                <input class="white-text" id="label_field" name="label_field" type="text">
+                <label for="label_field">Label</label>
+             </div>
+            <div class="input-field col s2">
+                <input class="white-text" id="search_field" name="search_field"  type="text">
+                <label for="search_field">Proprietà</label>
+            </div>
+            <div class="input-field col s2">
+                <input class="white-text" id="search_value" name="search_value" type="text">
+                <label for="search_value">Valore da cercare</label>
+            </div>
+
+
+            <div class="input-field col s2 white-text">
+                <select class="white-text" id="search_type" name="search_type">
+                    <option class="white-text" value="eq">Uguale</option>
+                    <option class="white-text" value="contains">Contiene</option>
+                </select>
+                <label>Tipo ricerca</label>
+            </div>
+
+            <div class="input-field col s2">
+                <input class="white-text" id="limit_field" name="limit_field" type="number" max="1000" min="1" value="5">
+                <label for="limit_field">Limite risultati</label>
+            </div>
+
+            <div class="col s2">
+                <button name="search query" onclick="search_query();" class="waves-effect waves-light btn">Cerca</button>
+            </div>
+
+        </div>
+        <div class="row valign-wrapper">
+            <div class="input-field col s2">
+                <input class="white-text" id="edge_filter" name="edge_filter" type="text">
+                <label for="edge_filter">Tipo link</label>
+            </div>
+
+            <div class="input-field col s2">
+                <input class="white-text" id="nbLayers" name="nbLayers" type="number" max="1" min="128" onclick="set_nb_layers()">
+                <label for="nbLayers">N. di layers</label>
+            </div>
+
+            <!-- Sfuma il grafo checkbx-->
+            <div class="input-field col s1">
+                <p>
+                    <label>
+                        <input type="checkbox" id="fadeLayers" name="fadeLayers" onclick="set_fade_layers()"/>
+                        <span>Sfuma il grafo</span>
+                        <input id="nodesckprops" name="nodesckprops" type="hidden" value="">
+                    </label>
+                </p>
+            </div>
+            <!-- Congela esplorazione checkbx-->
+            <div class="input-field col s1">
+                <p>
+                    <label>
+                        <input id="freeze-in" name="Freeze" type="checkbox"/>
+                        <span>Congela esplorazione</span>
+                    </label>
+                </p>
+            </div>
+
+            <div class="input-field col s1">
+                <p>
+                    <label>
+                        <input id="showName" name="showName_box" onclick="graphShapes.show_names()" type="checkbox">
+                        <span>Mostra labels</span>
+                    </label>
+                </p>
+            </div>
+
+            <div class="input-field col s1">
+                <select class="white-text"  id="server_address2" name="server_address">
+                    <option class="white-text"  value="localhost">locale</option>
+                    <option class="white-text"  value="172.20.28.30">server Unimi</option>
+                </select>
+                <label for="server_address2">Server Address:</label>
+            </div>
+
+            <div class="col s1">
+                <button name="clear" onclick="graph_viz.clear();" class="waves-effect waves-light btn">Pulisci schermo</button>
+            </div>
+            <div class="col s1">
+                <button name="salva" onclick="saveSvg(main, 'test.svg');" class="waves-effect waves-light btn">Salva</button>
+            </div>
+
+
+
+
+        </div>
+    </div>
+    <script type="text/javascript" src="scripts/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="scripts/materialize.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('select').formSelect();
+            $('select').css("color", "#ffffff");
+        });
+    </script>
+</body>
+</html>

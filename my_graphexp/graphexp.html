@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <title>Graphexp, graph explorer</title>
+    <link href="css/graphStyle.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.css" media="screen,projection"/>
+
+
+
+</head>
+<body id="body">
+<!----------------------------------------------------NAVBAR-------------------------------------------------->
+
+<div class="section grey lighten-3" id="navbar">
+    <div class="row valign-wrapper">
+        <!--Label-->
+        <div class="input-field col s2">
+            <input id="label_field" name="label_field" type="text">
+            <label for="label_field">Label</label>
+        </div>
+        <!--Proprietà-->
+        <div class="input-field col s2">
+            <input id="search_field" name="search_field" type="text">
+            <label for="search_field">Proprietà</label>
+        </div>
+        <!--Valore da cercare-->
+        <div class="input-field col s2">
+            <input id="search_value" name="search_value" type="text">
+            <label for="search_value">Valore da cercare</label>
+        </div>
+        <!--Tipo di ricerca-->
+        <div class="input-field col s2 ">
+            <select id="search_type" name="search_type">
+                <option value="eq">Uguale</option>
+                <option value="contains">Contiene</option>
+            </select>
+            <label>Tipo ricerca</label>
+        </div>
+        <!--Limite risultati-->
+        <div class="input-field col s2">
+            <input id="limit_field" name="limit_field" type="number" max="1000" min="1" value="50">
+            <label for="limit_field">Limite risultati</label>
+        </div>
+        <!--Bottone cerca-->
+        <div class="col s2">
+            <button id="search_query" onclick="search_query();" class="waves-effect waves-light btn-large lightBlue round-large-button">  <i class="material-icons large">search</i></button>
+        </div>
+    </div>
+    <div class="row valign-wrapper">
+        <!--Tipo di link-->
+        <div class="input-field col s2">
+            <input  id="edge_filter" name="edge_filter" type="text">
+            <label for="edge_filter">Tipo link</label>
+        </div>
+        <!--N. di layers-->
+        <div class="input-field col s1">
+            <input id="nbLayers" name="nbLayers" type="number" max="1" min="128"
+                   onclick="set_nb_layers()">
+            <label for="nbLayers">N. di layers</label>
+        </div>
+        <!-- Sfuma il grafo checkbx-->
+        <div class="input-field col s2">
+            <p>
+                <label>
+                    <input type="checkbox" id="fadeLayers" name="fadeLayers" onclick="set_fade_layers()"/>
+                    <span>Sfuma il grafo</span>
+                    <input id="nodesckprops" name="nodesckprops" type="hidden" value="">
+                </label>
+            </p>
+        </div>
+        <!-- Congela esplorazione checkbx-->
+        <div class="input-field col s2">
+            <p>
+                <label>
+                    <input id="freeze-in" name="Freeze" type="checkbox"/>
+                    <span>Congela esplorazione</span>
+                </label>
+            </p>
+        </div>
+        <!--Mostra labels checkbox-->
+        <div class="input-field col s2">
+            <p>
+                <label>
+                    <input id="showName" name="showName_box" onclick="graphShapes.show_names()" type="checkbox">
+                    <span>Mostra labels</span>
+                </label>
+            </p>
+        </div>
+        <!--Server address-->
+        <div class="input-field col s1">
+            <select id="server_address" name="server_address">
+                <option value="localhost">locale</option>
+                <option value="172.20.28.30">server Unimi</option>
+            </select>
+            <label for="server_address">Server Address:</label>
+        </div>
+        <!--Bottone pulisci schermo-->
+        <div class="col s2">
+            <button name="clear" onclick="graph_viz.clear();" class="waves-effect waves-light lightBlue btn-large">Pulisci schermo
+            </button>
+        </div>
+        <!--Bottone salva-->
+        <div class="col s1">
+            <!--<button name="salva" onclick="saveSvg(main, 'test.svg');" class="waves-effect waves-light btn">Salva-->
+            <button id="salva" name="salva" class="waves-effect waves-light lightBlue btn-large round-large-button"> <i class="material-icons large">save</i> </button>
+        </div>
+    </div>
+    <div class="hidden" id="messageArea"></div>
+
+</div>
+
+
+<!----------------Grafo------------------->
+
+<div class="content" id="content">
+    <div class="main" id="main">
+        <svg></svg>
+    </div>
+</div>
+
+<!-- TODO: Modificare poi nel codice la modifica dello style: deve cambiare la classe-->
+<div class="tabella" id="boxtabella" style="display:none;">  <!-- per mostrare dati in formato tabellare -->
+    <div class="container" id="tabellone">
+        <table>
+            <tr>
+                <td>Prova</td>
+                <td>Riprova</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- TODO: Modificare poi nel codice la modifica dello style: deve cambiare la classe-->
+<div class="footer" style="display:none;">   <!-- nascondo la barra parametri -->
+    <div class="container">
+        <div class="nav inputs_container_top">
+            <!--Info server-->
+            <div class="nav input_unit_container">
+                <label class="nav input_label" for="server_address">Server Address:</label>
+                <input id="server_address" name="server_address" value="localhost"/>
+                <!-- TODO: ID duplicato, capire se viene usato nel codice e quale dei due-->
+            </div>
+            <div class="nav input_unit_container">
+                <label class="nav input_label" for="server_port">Server port:</label>
+                <input id="server_port" name="server_port" type="number" value="8182"/>
+            </div>
+            <div class="nav input_unit_container">
+                <label for="server_protocol">Protocol:</label> <select id="server_protocol" name="server_protocol">
+                <option value="websocket">websocket</option>
+                <option value="websockets">websocket secure</option>
+                <option value="REST">REST</option>
+            </select>
+            </div>
+            <div class="nav input_unit_container">
+                <label for="communication_method">Gremlin version:</label>
+                <select id="communication_method" name="communication_method">
+                    <option value="GraphSON3">3.3.*</option>
+                    <option value="GraphSON3_4">3.4.*</option>
+                    <option value="GraphSON2">3.2.*</option>
+                </select>
+            </div>
+            <div class="nav input_unit_container">
+                <button onclick="editGraph()"> Edit Graph</button>
+            </div>
+
+            <!-- TODO: Modificare poi nel codice la modifica dello style: deve cambiare la classe-->
+            <div class="nav input_unit_container" id="editGraph" style="display:none;">
+                <button onclick="addVertexForm()" style="height:25px; width:150px"> Add Vertex</button>
+                <br>
+                <button onclick="editVertexForm()" style="height:25px; width:150px"> Edit Vertex</button>
+                <br>
+                <button onclick="addEditEdgeForm()" style="height:25px; width:150px"> Add/Edit Edge</button>
+                <br>
+            </div>
+
+            <!-- TODO: Modificare poi nel codice la modifica dello style: deve cambiare la classe-->
+            <div class="nav input_unit_container" id="addVertexForm" style="display:none;">
+                <table>
+                    <tr>
+                        <td><label class="vertex-label" for="vertexLabel"> Vertex Label: </label></td>
+                        <td>
+                            <input class="vertex-label-input" id="vertexLabel" name="vertexLabel"
+                                   placeholder="Enter Vertex Label" type="text">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="vertex-property-name" for="vertexPropertyName"> Vertex Property: </label>
+                        </td>
+                        <td>
+                            <input class="vertex-property-name-input" id="vertexPropertyName" name="vertexPropertyName"
+                                   placeholder="Enter Comma Seperated Property Name (e.g. name,age,gender)" type="text">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="vertex-property-value" for="vertexPropertyValue"> Property Value: </label>
+                        </td>
+                        <td>
+                            <input class="vertex-property-value-input" id="vertexPropertyValue"
+                                   name="vertexPropertyValue"
+                                   placeholder="Enter Comma Seperated Property Value (e.g. Sandeep,27,male)"
+                                   type="text">
+                        </td>
+                    </tr>
+                </table>
+                <!-- TODO: rimettere il centro-->
+                <button class="add-vertex-button" onclick="addVertex()"> Add Vertex</button>
+            </div>
+
+            <!-- TODO: Modificare poi nel codice la modifica dello style: deve cambiare la classe-->
+            <div class="nav input_unit_container" id="editVertexForm" style="display:none;">
+                <table>
+                    <tr>
+                        <td>
+                            <label class="vertex-id" for="vertexId"> Vertex ID: </label>
+                        </td>
+                        <td>
+                            <input class="vertex-id-input" id="vertexId" name="vertexId"
+                                   placeholder="Enter Vertex ID (e.g. 123)" type="text">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="vertex-id" for="vertexPropertyName_1"> Vertex Property: </label>
+                        </td>
+                        <td>
+                            <input class="vertex-id-input" id="vertexPropertyName_1" name="vertexPropertyName_1"
+                                   placeholder="Enter Comma Seperated Property Name (e.g. name,age)" type="text">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="vertex-property-value-1" for="vertexPropertyValue_1"> Property Value: </label>
+                        </td>
+                        <td>
+                            <input class="vertex-property-value-input-1" id="vertexPropertyValue_1"
+                                   name="vertexPropertyValue_1"
+                                   placeholder="Enter Comma Seperated Property Value (e.g. Sandeep,25)" type="text">
+                        </td>
+                    </tr>
+                </table>
+                <!--TODO: rimetterlo centrato -->
+                <button class="add-vertex-button" onclick="editVertex()"> Edit Vertex</button>
+
+            </div>
+
+            <!-- TODO: Modificare poi nel codice la modifica dello style: deve cambiare la classe-->
+            <div class="nav input_unit_container" id="addEditEdgeForm" style="display:none;">
+                <table>
+                    <tr>
+                        <td><label class="edge-label" for="edgeLabel"> Edge Label: </label></td>
+                        <td>
+                            <input class="edge-label-input" id="edgeLabel" name="edgeLabel"
+                                   placeholder="Enter Edge Label" type="text">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="edge-label" for="sourceVertexId"> Source Vertex ID: </label>
+                        </td>
+                        <td>
+                            <input class="edge-label-input" id="sourceVertexId" name="sourceVertexId"
+                                   placeholder="Enter Source Vertex ID" type="text">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="edge-label" for="targetVertexId"> Target Vertex ID: </label>
+                        </td>
+                        <td>
+                            <input class="edge-label-input" id="targetVertexId" name="targetVertexId"
+                                   placeholder="Enter Target Vertex ID" type="text">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="edge-label" for="edgePropertyName"> Property Name: </label></td>
+                        <td>
+                            <input class="edge-label-input" id="edgePropertyName" name="edgePropertyName"
+                                   placeholder="Enter Comma Seperated Property Name" type="text">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label class="edge-label" for="edgePropertyValue"> Property Value: </label>
+                        </td>
+                        <td>
+                            <input class="edge-label-input" id="edgePropertyValue" name="edgePropertyValue"
+                                   placeholder="Enter Comma Seperated Property Value" type="text">
+                        </td>
+                    </tr>
+                </table>
+                <!-- TODO: Metterlo centrato-->
+                <button class="add-vertex-button" onclick="addEditEdge()">Add/Edit Edge</button>
+            </div>
+
+
+        </div>
+        <a href="http://www.github.com/bricaud/graphexp" target="_blank">Graph Explorer V 0.8.0</a>
+    </div>
+</div>
+
+<!---------------------------------------menu nodo---------------------------------------->
+
+
+<nav class="context-menu" id="contextMenu">
+</nav>
+
+
+
+<!-------------------------------------Pop up graph info------------------------------------>
+<div id="popUpGraphInfo" class="hidden popup scrollable">
+    <div class="row">
+        <div class="col s11 no-padding">
+            <div class="lightBlue popup-header" style="font-size: 20px !important;" id="popUpGraphInfoHeader">⠀</div>
+        </div>
+        <div id="closeGraphInfoPopUpDiv" class="col s1 red darken-3 popup-close">
+            <a class="white-text" id="closeGraphInfoPopUp"><i style="font-size: 20px !important;" class="material-icons">close</i></a>
+        </div>
+    </div>
+    <br>
+    <div id="graphInfo"></div>
+
+</div>
+
+<!--------------------------------------Pop up entity------------------------------------>
+
+<div  id="popUpEntityInfo" class="hidden popup scrollable">
+    <div class="row">
+        <div class="col s11 no-padding">
+            <div class="lightBlue popup-header" style="font-size: 20px !important;" id="popUpEntityInfoHeader">⠀</div>
+        </div>
+        <div id="closeEntityInfoPopUpDiv" class="col s1 red darken-3 popup-close">
+            <a class="white-text" id="closeEntityInfoPopUp"><i style="font-size: 20px !important;" class="material-icons">close</i></a>
+        </div>
+    </div>
+    <div id="details" >
+        <br>
+        <div id="outputArea"></div>
+        <div id="nodeInfo"></div>
+    </div>
+
+</div>
+
+<!--------------------------------Pop up Legenda--------------------------------------->
+
+<div id="popUpLegenda" class="hidden popup">
+    <div class="row">
+        <div class="col s11 no-padding">
+            <div class="lightBlue popup-header" style="font-size: 20px !important;" id="popUpLegendaHeader">Legenda</div>
+        </div>
+        <div id="closeLegendaPopUpDiv" class="col s1 red darken-3 popup-close">
+            <a class="white-text" id="closeLegendaPopUp"> <i style="font-size: 20px !important;" class="material-icons">close</i></a>
+        </div>
+    </div>
+    <div id="legenda" class="scrollable">
+
+    </div>
+
+</div>
+
+<!-------------------PopUp modifica Attributi----------------------------------------------------->
+<div id="popUpAttributes" class="hidden popup z-depth-1 scrollable" style="min-height: 600px; /*overflow-x: hidden; overflow-y: hidden*/">
+    <!-- Include a header DIV with the same name as the draggable DIV, followed by "header" -->
+    <div class="row valign-wrapper">
+        <div class="col s11 no-padding" >
+            <div class="lightBlue popup-header" id="popUpAttributesHeader" style="font-size:20px!important;">⠀</div>
+        </div>
+        <div id="closeAttributesPopUpDiv" class="col s1 red darken-3 popup-close" >
+            <a class="white-text" id="closeAttributesPopUp" > <i style="font-size:20px!important;" class="material-icons">close</i></a>
+        </div>
+    </div>
+    <div id="attributesDiv">
+
+    </div>
+    <div id="modifiersDiv">
+
+    </div>
+</div>
+
+
+<!-------------------Floating Action button pop up graph info----------------------------------->
+<div class="fixed-action-btn left">
+    <a class="btn-floating btn-large lightBlue left-align tooltipped" data-position="right"
+       data-tooltip="Info Grafo" id="fab_showgraphinfo">
+        <i class="large material-icons">info</i>
+    </a>
+</div>
+
+<div class="fixed-action-btn" style="bottom: 95px">
+    <a class="btn-floating btn-large lightBlue tooltipped" data-position="right" data-tooltip="Legenda"
+       id="fabLegenda">
+        <i class="large material-icons">format_list_bulleted</i>
+    </a>
+</div>
+
+<div class="fixed-action-btn" style="bottom: 170px">
+    <a class="btn-floating btn-large lightBlue tooltipped" data-position="right" data-tooltip="Modifica per attributo" id="fabAttributi">
+        <i class="large material-icons">palette</i>
+    </a>
+</div>
+
+<div class="fixed-action-btn" style="bottom: 250px">
+    <a class="btn-floating btn-large lightBlue modal-trigger tooltipped" data-position="right" data-tooltip="Inserimento manuale di una query" href="#modalInserimentoQuery" id="fabQuery">
+        <i class="large material-icons">manage_search</i>
+    </a>
+</div>
+
+
+<!-------------------------------------------Modal input query---------------------------------------------------------->
+<div id="modalInserimentoQuery" class="modal">
+    <div class="modal-content">
+        <h3>Inserimento manuale di una query</h3>
+        <div class="row valign-wrapper">
+            <div class="input-field col s10">
+                <textarea id="queryInput" class="materialize-textarea"></textarea>
+                <label for="queryInput">Query</label>
+            </div>
+
+            <div class="col s2">
+                <a id="clearQueryInput" onclick="$('#queryInput').val(' ');M.textareaAutoResize($('#queryInput'));" class="waves-effect waves-light btn">Pulisci</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col s12 center-align center">
+                <a id="searchQueryInput" class="waves-effect waves-light btn"><i class="material-icons left">search</i>Search</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!--------------------------------IMPORT SCRIPTS------------------------------------------>
+
+<script src="scripts/jquery-3.2.1.min.js"></script>
+<script src="scripts/materialize.min.js"></script>
+
+
+<script src="scripts/utils.js"></script>
+<!-- Libreria per disegnare il grafo penso-->
+<script src="scripts/d3.v4.min.js"></script>
+<!-- Librerie di graphExp -->
+<script src="scripts/graphConf.js"></script>
+<script src="scripts/graphShapes.js"></script>
+<!--Cercando su internet relazionato con google maps API ma non credo sia il nostro caso-->
+<script src="scripts/infobox.js"></script>
+
+<script src="scripts/initInterface.js"></script>
+<script src="scripts/contextmenu.js"></script>
+
+
+<script src="scripts/graph_viz.js"></script>
+<script src="scripts/graphioGremlin.js"></script>
+<script src="scripts/editGraph.js"></script>
+<script src="scripts/attributeModify.js"></script>
+
+<!-- Script spostati -->
+<script src="scripts/misc.js"></script>
+<script src="scripts/init.js"></script>
+
+
+<!--Per salvare lo screenshot-->
+<script src="scripts/html2canvas.min.js"></script>
+
+
+</body>
+</html>

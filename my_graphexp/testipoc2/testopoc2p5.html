@@ -1,0 +1,100 @@
+<html>
+<head>
+<meta http-equiv="Cache-Control" content="no-cache">
+</head>
+<script type="text/javascript">
+function xxx() {
+document.getElementById("temptime").setAttribute('value',Date.now());
+var getUrl = window.location;
+myhost = getUrl.host;
+duepunti = myhost.indexOf(":");
+if (duepunti>-1) myhost = myhost.substring(0,duepunti);
+var baseUrl1 = getUrl.protocol + "//"+ myhost+":8001/html/testipoc2/linked.html";
+var baseUrl2 = getUrl.protocol + "//"+ myhost+":8001/html/testipoc2/doclinked.html";
+document.getElementById("btn1").setAttribute('formaction',baseUrl1);
+document.getElementById("btn2").setAttribute('formaction',baseUrl2);
+}
+</script>
+<body onload="xxx()">
+<style type="text/css" media="screen">
+/*
+.nodes-image {
+	margin:-100;
+}
+*/
+body
+{
+	margin: 0;
+	padding: 0;
+	color: #333;
+	background-color: #fff;
+	font: 12px "Helvetica Neue", Helvetica, Arial, Geneva, sans-serif;
+}
+
+th, td
+{
+	padding: .5em 1em;
+	vertical-align: top;
+	text-align: left;
+}
+	
+    .imageblock .content img {
+        max-width: 900px;
+        max-height: 300px;
+    }
+	.deck h3 {
+		display: block !important;
+		margin-bottom:8px;
+		margin-top:5px;
+	}
+	.listingblock {
+		margin:8px;
+	}
+	.pull-bottom {
+		position:relative;
+		bottom:1em;
+	}
+</style>
+<style type="text/css" media="screen">
+#editor.maximize-editor .CodeMirror-code {
+ font-size:40px;
+ line-height:45px;
+}
+</style>
+<table>
+<tr>
+<td width="45%">
+    <h3>Altri legami fra i soci delle societ&agrave; sospette</h3>
+    <br/>
+    <div>
+      <div class="paragraph">
+<div>
+<p>Per cercare altri legami fra le societ&agrave; sospettate immaginiamo di scansionare con un programma i loro siti web alla ricerca di profili linkedin.<br/>
+Successivamente, un altro programma legger&agrave; tali profili, creando legami tra le persone coinvolte.<br/>
+In questo modo troviamo un legame tra il legale rappresentante della delta s.p.a. e un socio della gamma s.r.l.
+Ripetendo la query precedente vediamo che tutte le societ&agrave; sospette sono ora collegate</p></div>
+<div>
+</td>
+<td>
+<table>
+<tr>
+<td>
+<form>
+Siti web da scansionare per cercare profili linkedin:<br/>
+<input name="cfis" type="text" value="www.alfasrl.it www.betasnc.com www.gammasrl.it"><br/>
+<input type="hidden" value="1598879179" name="temptime" id="temptime"/>
+<button formaction="http://localhost:8001/html/testipoc2/linked.html" formtarget="iframe1" id="btn1">Acquisisci</button>
+<button formaction="http://localhost:8001/html/testipoc2/doclinked.html" formtarget="iframe1" id="btn2">Situazione documenti</button>
+</form>
+</td><td>
+<iframe name="iframe1" src="about:blank"  height="160px" width="600px"></iframe>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+
+</body>
+</html>
